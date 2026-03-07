@@ -17,6 +17,8 @@
 
 ## 📢 最新动态
 
+- **2026-03-08**:
+  - 新增 `--user-intent` 参数 — 用自然语言告诉 AI 你在找什么（如 `--user-intent "关于 AI 风险的观点"`），LLM 在片段筛选和排名时会优先考虑相关内容
 - **2026-03-04**:
   - **Git 历史变更通知**：错误的减小 GitHub size 的尝试导致 Git 历史被重写，对现有用户造成不便，深感抱歉。已有克隆用户需运行 `git fetch origin && git reset --hard origin/main` 以同步最新历史
   - 新增[字幕烧录功能](#subtitle-burning) — 使用 `--burn-subtitles` 将 SRT 字幕直接烧录到剪辑视频中；可选 `--subtitle-translation "Simplified Chinese"` 同时烧录中英双语字幕（需要带 libass 的 ffmpeg）
@@ -43,7 +45,7 @@
 - **灵活输入**：支持 Bilibili、YouTube URL 或本地视频文件
 - **智能转录**：优先使用平台字幕，回退到 Whisper
 - **说话人识别**（预览版）：自动识别谁在说话，将真实姓名标注到字幕中，适合访谈、座谈、辩论和播客
-- **AI 分析**：基于内容、互动和娱乐价值识别精彩时刻
+- **AI 分析**：基于内容、互动和娱乐价值识别精彩时刻；支持 `--user-intent` 引导 AI 聚焦特定关注点
 - **剪辑生成**：提取最精彩时刻为独立视频剪辑，自动生成字幕文件、标题和封面图片
 - **字幕烧录**（可选）：将 SRT 字幕硬烧到视频画面中，可选通过 Qwen 翻译成目标语言后烧录双语字幕
 - **背景上下文**：可选的添加背景信息（如主播姓名等）以获得更好的分析
@@ -265,6 +267,7 @@ uv run python video_orchestrator.py \
 | `--browser` | 用于 cookie 的浏览器（`chrome`/`firefox`/`edge`/`safari`） | `firefox` |
 | `--force-whisper` | 强制使用 Whisper 转录（忽略平台字幕） | 关 |
 | `--use-background` | 使用背景信息辅助分析 | 关 |
+| `--user-intent` | 用自然语言描述关注重点（如 `"关于 AI 风险的观点"`），引导 AI 优先选取相关片段 | 无 |
 | `--max-clips` | 最大精彩片段数量 | `5` |
 | `--title-style` | Banner 标题艺术风格（见下方列表） | `fire_flame` |
 | `--title-font-size` | 艺术标题字体大小（可选：small=30px, medium=40px, large=50px, xlarge=60px，默认：medium=40px） | `medium` |

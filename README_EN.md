@@ -17,6 +17,8 @@ Give it a video URL or local file, and it handles the full pipeline: **Download 
 
 ## 📢 News
 
+- **2026-03-08**:
+  - Added `--user-intent` argument — tell the AI what you're looking for in natural language (e.g. `--user-intent "moments about AI risks"`); steers clip selection and ranking at both the per-part and aggregation stages
 - **2026-03-04**:
   - **Git History Notice**: A mistaken attempt to reduce GitHub repo size caused the git history to be rewritten. Sorry for the inconvenience. Existing users need to run `git fetch origin && git reset --hard origin/main` to sync with the latest history
   - Added [subtitle burning](#subtitle-burning) — use `--burn-subtitles` to hard-burn SRT subtitles into clip videos; optionally add `--subtitle-translation "Simplified Chinese"` to burn bilingual subtitles (requires ffmpeg with libass)
@@ -43,7 +45,7 @@ Give it a video URL or local file, and it handles the full pipeline: **Download 
 - **Flexible Input**: Bilibili/YouTube URLs or local video files
 - **Smart Transcription**: Uses platform subtitles when available, falls back to Whisper
 - **Speaker Identification** (Preview): automatically identifies who is speaking and labels transcripts with real names — great for interviews, panels, debates, and podcasts
-- **AI Analysis**: Identifies engaging moments based on content, interaction, and entertainment value
+- **AI Analysis**: Identifies engaging moments based on content, interaction, and entertainment value; supports `--user-intent` to focus the AI on what you care about
 - **Clip Generation**: Extracts the most engaging moments as standalone video clips, automatically generating subtitle files, titles, and cover images
 - **Subtitle Burning** (optional): Hard-burns SRT subtitles into the video frame; optionally translates to a target language via Qwen and burns both tracks as bilingual subtitles
 - **Background Context**: Optionally add background information (e.g., streamer names) for better analysis
@@ -265,6 +267,7 @@ Output goes to `clips_post_processed/`. The original language appears at the bot
 | `--browser` | Browser for cookies (`chrome`/`firefox`/`edge`/`safari`) | `firefox` |
 | `--force-whisper` | Force Whisper transcription (ignore platform subtitles) | Off |
 | `--use-background` | Use background info for analysis | Off |
+| `--user-intent` | Natural language description of what you're looking for (e.g. `"moments about AI risks"`); steers LLM clip selection and ranking | None |
 | `--max-clips` | Maximum number of highlight clips | `5` |
 | `--title-style` | Title artistic style (see list below) | `fire_flame` |
 | `--title-font-size` | Font size preset for artistic titles. Options: small(30px), medium(40px), large(50px), xlarge(60px) (default: medium=40px) | `medium` |

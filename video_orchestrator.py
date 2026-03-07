@@ -1141,6 +1141,10 @@ Note: Set QWEN_API_KEY or OPENROUTER_API_KEY environment variable based on your 
                        help='Translate subtitles to this language before burning '
                             '(e.g. "Simplified Chinese"). Both original and translated tracks are burned. '
                             'Requires --burn-subtitles and QWEN_API_KEY.')
+    parser.add_argument('--user-intent', metavar='TEXT',
+                       help='Free-text description of what you are looking for '
+                            '(e.g. "moments about AI risks"). Steers LLM clip selection '
+                            'and ranking toward this focus.')
     args = parser.parse_args()
 
     if args.verbose:
@@ -1181,6 +1185,7 @@ Note: Set QWEN_API_KEY or OPENROUTER_API_KEY environment variable based on your 
         speaker_references_dir=args.speaker_references,
         burn_subtitles=args.burn_subtitles,
         subtitle_translation=args.subtitle_translation,
+        user_intent=args.user_intent,
     )
     
     def progress_callback(status: str, progress: float):
