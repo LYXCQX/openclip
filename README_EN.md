@@ -29,9 +29,14 @@ Give it a video URL or local file, and it handles the full pipeline: **Download 
   - Streamlit interface now supports [background job processing and concurrent video processing](#concurrent-processing)
   - Added [speaker identification (Preview)](#speaker-identification) — use `--speaker-references` to automatically label speakers by name in transcripts for interviews, panels, and podcasts
   - Improved AI prompts to reduce timestamp format confusion (e.g., `00:01:55` vs `01:55:00`)
+<details>
+<summary>Older updates</summary>
+
 - **2025-02-26**:
   - Switched default Qwen model from legacy qwen-turbo to qwen3.5-flash
   - Improved AI prompts to reduce timestamp hallucination and enhance title quality
+
+</details>
 
 ## 🎬 Demos
 

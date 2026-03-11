@@ -29,9 +29,14 @@
   - Streamlit 界面支持[后台任务处理和并发处理多个视频](#concurrent-processing)
   - 新增[说话人识别功能（预览版）](#speaker-identification)— 使用 `--speaker-references` 为访谈/座谈/播客视频自动标注说话人姓名
   - 优化 AI 提示词，减少时间戳格式混淆（如 `00:01:55` vs `01:55:00`）
+<details>
+<summary>更早的更新</summary>
+
 - **2025-02-26**:
   - 默认 Qwen 模型从旧版 qwen-turbo 切换至 qwen3.5-flash
   - 优化 AI 提示词，减少时间戳幻觉，提升标题质量
+
+</details>
 
 ## 🎬 演示
 
