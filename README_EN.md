@@ -163,16 +163,24 @@ The Streamlit interface supports background job processing and concurrent video 
 
 #### Option B: Using AI Agent Skills
 
-If you use [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [TRAE](https://www.trae.ai/), you can process videos using natural language without manually typing commands:
+If you use [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [TRAE](https://www.trae.ai/), Cursor, or any other agent that supports skills, you can process videos using natural language without manually typing commands:
 
 ```
 "Extract highlights from this video: https://www.bilibili.com/video/BV1234567890"
 "Process ~/Downloads/livestream.mp4 with English as output language"
 ```
 
-The agent automatically invokes the built-in skill to handle the full pipeline: downloading, transcription, analysis, clip generation, and title styling.
+The agent automatically handles the full pipeline: setup, downloading, transcription, analysis, clip generation, and title styling.
 
-Skill definitions are located in `.claude/skills/` and `.trae/skills/`.
+**Choose your install method:**
+
+| Scenario | What to do |
+|----------|------------|
+| Already cloned this repo | Nothing — the skill is active automatically when your agent is opened inside the repo directory |
+| Want the skill globally (any directory, any project) | `npx skills add https://github.com/linzzzzzz/openclip --skill video-clip-extractor -g` |
+| Want the skill in one specific project folder | Run `npx skills add https://github.com/linzzzzzz/openclip --skill video-clip-extractor` from that folder |
+
+The skill definition is in `.claude/skills/video-clip-extractor/`.
 
 #### Option C: Using Command Line Interface
 

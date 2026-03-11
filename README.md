@@ -163,16 +163,24 @@ Streamlit 界面支持后台任务处理和并发处理多个视频：
 
 #### 选项 B：使用 AI Agent 技能
 
-如果你使用 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 或 [TRAE](https://www.trae.ai/)，可以直接用自然语言处理视频，无需手动输入命令：
+如果你使用 [Claude Code](https://docs.anthropic.com/en/docs/claude-code)、[TRAE](https://www.trae.ai/)、Cursor 或任何其他支持 skills 的 Agent，可以直接用自然语言处理视频，无需手动输入命令：
 
 ```
 "帮我从这个视频里提取精彩片段：https://www.bilibili.com/video/BV1234567890"
 "处理一下 ~/Downloads/livestream.mp4，用英语作为输出语言"
 ```
 
-Agent 会自动调用内置技能，完成下载、转录、分析、剪辑和标题添加等全部流程。
+Agent 会自动完成环境配置、下载、转录、分析、剪辑和标题添加等全部流程。
 
-技能定义位于 `.claude/skills/` 和 `.trae/skills/` 目录下。
+**选择安装方式：**
+
+| 场景 | 操作 |
+|------|------|
+| 已克隆本仓库 | 无需操作 — 在仓库目录内打开 Agent 时技能自动生效 |
+| 全局使用（任意目录、任意项目均可触发） | 在任意目录执行：`npx skills add https://github.com/linzzzzzz/openclip --skill video-clip-extractor -g` |
+| 仅在某个特定项目目录内使用 | 在该目录下执行：`npx skills add https://github.com/linzzzzzz/openclip --skill video-clip-extractor` |
+
+技能定义位于 `.claude/skills/video-clip-extractor/` 目录下。
 
 #### 选项 C：使用命令行界面
 
