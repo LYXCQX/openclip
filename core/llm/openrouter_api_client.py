@@ -4,6 +4,7 @@ OpenRouter API Client - Implementation for interacting with OpenRouter API
 
 import json
 import logging
+import time
 import requests
 from typing import Dict, List, Optional, Any
 import os
@@ -45,7 +46,7 @@ class OpenRouterAPIClient:
             "Content-Type": "application/json"
         }
         
-        max_attempts = 2
+        max_attempts = 3
         for attempt in range(1, max_attempts + 1):
             try:
                 response = requests.post(self.base_url, headers=headers, json=payload, timeout=180)
@@ -54,6 +55,13 @@ class OpenRouterAPIClient:
             except requests.exceptions.Timeout as e:
                 if attempt < max_attempts:
                     logger.warning(f"API request timed out (attempt {attempt}/{max_attempts}), retrying...")
+                    continue
+                raise Exception(f"API request failed: {e}")
+            except requests.exceptions.HTTPError as e:
+                if response.status_code == 429 and attempt < max_attempts:
+                    wait = 5 * attempt
+                    logger.warning(f"Rate limited (429), waiting {wait}s before retry {attempt}/{max_attempts}...")
+                    time.sleep(wait)
                     continue
                 raise Exception(f"API request failed: {e}")
             except requests.exceptions.RequestException as e:
