@@ -11,17 +11,19 @@ dependencies = [
     "requests>=2.31.0",
     "streamlit>=1.30.0",
     "openai-whisper>=20231117",
+    "whisperx>=3.8.1",
+    "huggingface-hub<1.0.0",
+    "ffmpeg-python",
+    "python-dotenv",
 ]
 
 [project.optional-dependencies]
-# Speaker identification for interview/panel/podcast videos
-# Install with: uv sync --extra speakers
+# Speaker identification is now included in main dependencies
+# whisperx and related packages are installed by default with: uv sync
 # Requires: HUGGINGFACE_TOKEN env var + accepted pyannote user agreements
 speakers = [
-    "whisperx>=3.8.1",
-    "huggingface-hub<1.0.0",  # whisperx/pyannote compatibility
-    "ffmpeg-python",
-    "python-dotenv",
+    # This extra is kept for backward compatibility but is now empty
+    # as all speaker-related dependencies are in main dependencies
 ]
 
 # ── PyTorch platform routing ─────────────────────────────────────────────────

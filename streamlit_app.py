@@ -126,6 +126,15 @@ TRANSLATIONS = {
         'upload_video_help': 'Upload a video file from your local machine',
         'upload_srt_file': 'Upload Subtitle File (Optional)',
         'upload_srt_help': 'Upload a .srt subtitle file with the same name as the video',
+        'upload_method': 'Upload Method',
+        'upload_method_help': 'Choose how to provide the video file',
+        'method_streamlit': 'Streamlit Uploader (< 5GB)',
+        'method_colab': 'Colab Files (No Limit)',
+        'method_manual': 'Manual Path',
+        'streamlit_upload_info': '📤 Max file size: 5GB. For larger files, use Colab Files method.',
+        'colab_upload_info': '📤 No file size limit. Click the button below to upload.',
+        'colab_upload_button': '📁 Upload Video via Colab',
+        'upload_srt_optional': '📄 Upload Subtitle (Optional)',
     },
     'zh': {
         'app_title': 'OpenClip',
@@ -216,6 +225,15 @@ TRANSLATIONS = {
         'upload_video_help': '从本地上传视频文件',
         'upload_srt_file': '上传字幕文件（可选）',
         'upload_srt_help': '上传与视频同名的 .srt 字幕文件',
+        'upload_method': '上传方式',
+        'upload_method_help': '选择如何提供视频文件',
+        'method_streamlit': 'Streamlit 上传器（< 5GB）',
+        'method_colab': 'Colab 文件上传（无限制）',
+        'method_manual': '手动输入路径',
+        'streamlit_upload_info': '📤 最大文件大小：5GB。更大的文件请使用 Colab 文件上传方式。',
+        'colab_upload_info': '📤 无文件大小限制。点击下方按钮上传。',
+        'colab_upload_button': '📁 通过 Colab 上传视频',
+        'upload_srt_optional': '📄 上传字幕（可选）',
     }
 }
 
@@ -539,42 +557,119 @@ with st.sidebar:
         )
         data['video_source'] = video_source
     else:
-        # File uploader for Colab/cloud environments
-        uploaded_file = st.file_uploader(
-            t.get('upload_video_file', 'Upload Video File'),
-            type=['mp4', 'avi', 'mov', 'mkv', 'flv', 'wmv', 'webm'],
-            help=t.get('upload_video_help', 'Upload a video file from your local machine'),
-            key=f"video_uploader_{st.session_state.reset_counter}"
-        )
+        # Detect if running in Colab
+        try:
+            import google.colab
+            in_colab = True
+        except ImportError:
+            in_colab = False
         
-        if uploaded_file is not None:
-            # Create uploads directory if it doesn't exist
-            upload_dir = Path("uploaded_videos")
-            upload_dir.mkdir(exist_ok=True)
+        # Show upload method selection in Colab
+        if in_colab:
+            upload_method = st.radio(
+                t.get('upload_method', 'Upload Method'),
+                options=[
+                    t.get('method_streamlit', 'Streamlit Uploader (< 5GB)'),
+                    t.get('method_colab', 'Colab Files (No Limit)'),
+                    t.get('method_manual', 'Manual Path')
+                ],
+                help=t.get('upload_method_help', 'Choose how to provide the video file'),
+                key=f"upload_method_{st.session_state.reset_counter}"
+            )
+        else:
+            upload_method = t.get('method_streamlit', 'Streamlit Uploader (< 5GB)')
+        
+        video_source = ""
+        
+        # Method 1: Streamlit uploader (works everywhere, has size limit)
+        if t.get('method_streamlit', 'Streamlit Uploader') in upload_method:
+            st.info(t.get('streamlit_upload_info', '📤 Max file size: 5GB. For larger files, use Colab Files method.'))
             
-            # Save uploaded file
-            video_path = upload_dir / uploaded_file.name
-            with open(video_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
-            
-            video_source = str(video_path)
-            st.success(f"✅ File uploaded: {uploaded_file.name}")
-            
-            # Check for SRT file with same name
-            srt_uploader = st.file_uploader(
-                t.get('upload_srt_file', 'Upload Subtitle File (Optional)'),
-                type=['srt'],
-                help=t.get('upload_srt_help', 'Upload a .srt subtitle file with the same name as the video'),
-                key=f"srt_uploader_{st.session_state.reset_counter}"
+            uploaded_file = st.file_uploader(
+                t.get('upload_video_file', 'Upload Video File'),
+                type=['mp4', 'avi', 'mov', 'mkv', 'flv', 'wmv', 'webm'],
+                help=t.get('upload_video_help', 'Upload a video file from your local machine'),
+                key=f"video_uploader_{st.session_state.reset_counter}"
             )
             
-            if srt_uploader is not None:
-                srt_path = video_path.with_suffix('.srt')
-                with open(srt_path, "wb") as f:
-                    f.write(srt_uploader.getbuffer())
-                st.success(f"✅ Subtitle uploaded: {srt_uploader.name}")
+            if uploaded_file is not None:
+                # Create uploads directory if it doesn't exist
+                upload_dir = Path("uploaded_videos")
+                upload_dir.mkdir(exist_ok=True)
+                
+                # Save uploaded file with progress
+                video_path = upload_dir / uploaded_file.name
+                
+                with st.spinner(f'Saving {uploaded_file.name}...'):
+                    with open(video_path, "wb") as f:
+                        f.write(uploaded_file.getbuffer())
+                
+                video_source = str(video_path)
+                st.success(f"✅ File uploaded: {uploaded_file.name} ({uploaded_file.size / (1024*1024):.1f} MB)")
+                
+                # Optional SRT file
+                srt_uploader = st.file_uploader(
+                    t.get('upload_srt_file', 'Upload Subtitle File (Optional)'),
+                    type=['srt'],
+                    help=t.get('upload_srt_help', 'Upload a .srt subtitle file'),
+                    key=f"srt_uploader_{st.session_state.reset_counter}"
+                )
+                
+                if srt_uploader is not None:
+                    srt_path = video_path.with_suffix('.srt')
+                    with open(srt_path, "wb") as f:
+                        f.write(srt_uploader.getbuffer())
+                    st.success(f"✅ Subtitle uploaded: {srt_uploader.name}")
+        
+        # Method 2: Colab native uploader (no size limit, only in Colab)
+        elif in_colab and t.get('method_colab', 'Colab Files') in upload_method:
+            st.info(t.get('colab_upload_info', '📤 No file size limit. Click the button below to upload.'))
+            
+            if st.button(t.get('colab_upload_button', '📁 Upload Video via Colab'), key=f"colab_upload_{st.session_state.reset_counter}"):
+                try:
+                    from google.colab import files
+                    
+                    st.write("📤 File upload dialog will appear below...")
+                    uploaded = files.upload()
+                    
+                    if uploaded:
+                        # Create uploads directory
+                        upload_dir = Path("uploaded_videos")
+                        upload_dir.mkdir(exist_ok=True)
+                        
+                        # Get the uploaded file
+                        filename = list(uploaded.keys())[0]
+                        video_path = upload_dir / filename
+                        
+                        # File is already saved by Colab, just move it
+                        import shutil
+                        shutil.move(filename, video_path)
+                        
+                        video_source = str(video_path)
+                        st.success(f"✅ File uploaded: {filename}")
+                        
+                        # Save to session state to persist across reruns
+                        st.session_state[f'uploaded_video_path_{st.session_state.reset_counter}'] = video_source
+                        
+                        # Ask for SRT file
+                        if st.button(t.get('upload_srt_optional', '📄 Upload Subtitle (Optional)'), key=f"srt_colab_{st.session_state.reset_counter}"):
+                            srt_uploaded = files.upload()
+                            if srt_uploaded:
+                                srt_filename = list(srt_uploaded.keys())[0]
+                                srt_path = video_path.with_suffix('.srt')
+                                shutil.move(srt_filename, srt_path)
+                                st.success(f"✅ Subtitle uploaded: {srt_filename}")
+                except Exception as e:
+                    st.error(f"❌ Upload failed: {str(e)}")
+            
+            # Check if we have a previously uploaded file in session state
+            session_key = f'uploaded_video_path_{st.session_state.reset_counter}'
+            if session_key in st.session_state:
+                video_source = st.session_state[session_key]
+                st.info(f"📁 Using uploaded file: {Path(video_source).name}")
+        
+        # Method 3: Manual path input (fallback)
         else:
-            # Fallback to text input for manual path entry
             video_source = st.text_input(
                 t['local_file_path'],
                 value="" if data['input_type'] != "Local File" else data.get('video_source', ""),

@@ -92,6 +92,7 @@
 - **Python 3.11+** - 如果系统未安装，uv 会自动下载
 - **yt-dlp** - 用于从 Bilibili、YouTube 等平台下载视频
 - **Whisper** - 用于语音转文字
+- **WhisperX** - 增强版 Whisper，支持说话人识别和更精确的时间戳
 - 其他 Python 依赖（moviepy、streamlit 等）
 
 ## 🚀 快速开始
@@ -138,6 +139,56 @@ uv run python -m streamlit run streamlit_app.py
 5. 在结果区域预览生成的剪辑和封面
 
 **优势：** 无需记住命令行参数，提供可视化操作界面，适合所有用户。
+
+**📤 文件上传功能：**
+
+在 Streamlit 界面中选择「Local File」输入类型时，提供三种上传方式：
+
+1. **Streamlit 上传器**（< 5GB）- 简单易用，拖拽上传
+2. **Colab 文件上传**（无限制）⭐ - 适合大型视频，仅在 Google Colab 环境可用
+3. **手动输入路径** - 适合已上传的文件或 Google Drive 挂载的文件
+
+详见 [文件上传指南](UPLOAD_GUIDE.md)
+
+**☁️ 在 Google Colab 中运行：**
+
+OpenClip 完全支持在 Google Colab 中运行，无需本地安装：
+
+```python
+# 在 Colab notebook 中运行
+!git clone https://github.com/linzzzzzz/openclip.git
+%cd openclip
+
+# 安装 uv（推荐使用官方安装脚本）
+!curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# 将 uv 添加到 PATH
+import os
+os.environ['PATH'] = f"{os.environ['HOME']}/.cargo/bin:{os.environ['PATH']}"
+
+# 安装项目依赖
+!uv sync
+
+# 安装 FFmpeg
+!apt-get update && apt-get install -y ffmpeg
+
+# 设置 API 密钥
+os.environ['QWEN_API_KEY'] = 'your-api-key'
+
+# 启动 Streamlit
+!pip install streamlit pyngrok
+!uv run streamlit run streamlit_app.py &
+
+# 使用 ngrok 创建公共 URL
+from pyngrok import ngrok
+ngrok.set_auth_token("your-ngrok-token")
+public_url = ngrok.connect(8501)
+print(f"访问: {public_url}")
+```
+
+完整的 Colab Notebook 示例：[openclip_colab.ipynb](openclip_colab.ipynb)
+
+详细部署指南：[COLAB_SETUP.md](COLAB_SETUP.md)
 
 <a id="concurrent-processing"></a>
 <details>

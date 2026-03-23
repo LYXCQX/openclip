@@ -53,6 +53,9 @@ tests/
 .claude/settings.local.json
 uploaded_videos/
 
+# Streamlit
+.streamlit/secrets.toml
+
 # Test results
 artistic_test_results/
 artistic_banner_test/
