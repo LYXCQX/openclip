@@ -163,15 +163,26 @@ class TranscriptProcessor:
         language: Optional[str] = None,
         enable_diarization: bool = False,
         speaker_references_dir: Optional[str] = None,
+        use_whisperx: Optional[bool] = None,
     ):
         self.whisper_model = whisper_model
         self.language = language  # None = auto-detect
         self.enable_diarization = enable_diarization
-        # WhisperX is required for diarization; enable it automatically when requested.
-        self.use_whisperx = enable_diarization and WHISPERX_AVAILABLE
+        
+        # Determine whether to use WhisperX:
+        # 1. If explicitly specified via parameter, use that
+        # 2. Otherwise, use WhisperX if diarization is enabled OR if USE_WHISPERX_BY_DEFAULT is True
+        # 3. Only use WhisperX if it's actually available
+        from core.config import USE_WHISPERX_BY_DEFAULT
+        if use_whisperx is not None:
+            self.use_whisperx = use_whisperx and WHISPERX_AVAILABLE
+        else:
+            self.use_whisperx = (enable_diarization or USE_WHISPERX_BY_DEFAULT) and WHISPERX_AVAILABLE
 
         if enable_diarization and not WHISPERX_AVAILABLE:
             logger.warning("⚠️  Speaker diarization requested but WhisperX is not installed. Falling back to openai-whisper (no speaker labels). Run: uv sync --extra speakers")
+        elif self.use_whisperx and not enable_diarization:
+            logger.info("⚡ Using WhisperX for better timestamp alignment (diarization disabled)")
 
         self.whisperx_processor = None
         if self.use_whisperx:

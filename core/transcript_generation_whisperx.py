@@ -139,13 +139,10 @@ class TranscriptProcessorWhisperX:
         logger.info(f"⚡ WhisperX: Transcribing (model: {self.whisper_model})")
         model = whisperx.load_model(self.whisper_model, self.device, compute_type=self.compute_type)
 
-        # Detect language on first 30 s before the full transcription so we can
-        # pass the right chunk_size: CJK scripts need smaller chunks (5 s) because
-        # NLTK punkt tokenizer can't split sentences without spaces.
-        audio_30s = audio[:30 * _WHISPERX_SAMPLE_RATE]
-        detected_language = model.detect_language(audio_30s)  # returns str in this version
-        chunk_size = _chunk_size_for(detected_language)
-        logger.info(f"⚡ WhisperX: Detected language: {detected_language} → chunk_size={chunk_size}")
+        # Use Chinese language directly (skip detection)
+        detected_language = "zh"
+        chunk_size = _CHUNK_SIZE_CJK  # 5 seconds for Chinese
+        logger.info(f"⚡ WhisperX: Using language: {detected_language} → chunk_size={chunk_size}")
 
         result = model.transcribe(audio, batch_size=16, language=detected_language, chunk_size=chunk_size)
         del model
@@ -156,13 +153,16 @@ class TranscriptProcessorWhisperX:
             callback("Aligning word timestamps...", 40)
         logger.info("⚡ WhisperX: Aligning timestamps")
         try:
+            from core.config import USE_CHAR_LEVEL_ALIGNMENT
             model_a, metadata = whisperx.load_align_model(
                 language_code=detected_language, device=self.device
             )
             result = whisperx.align(
                 result["segments"], model_a, metadata, audio, self.device,
-                return_char_alignments=False,
+                return_char_alignments=USE_CHAR_LEVEL_ALIGNMENT,
             )
+            alignment_type = "character-level" if USE_CHAR_LEVEL_ALIGNMENT else "word-level"
+            logger.info(f"⚡ WhisperX: Using {alignment_type} alignment for better precision")
             del model_a
         except Exception as e:
             logger.warning(f"⚠️  Alignment failed ({e}), using unaligned segments")

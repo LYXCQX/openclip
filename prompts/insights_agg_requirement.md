@@ -16,7 +16,7 @@ Review all the intellectual insights extracted from multiple video parts and sel
 ### Secondary Factors
 - **Completeness**: The clip is self-contained — a viewer understands it without watching the rest
 - **Diversity**: Prefer selecting across different topics when quality is equal
-- **Duration**: Optimal 45–120 seconds; penalize clips that are too short (< 45s) or too long (> 150s)
+- **Duration**: Optimal 10–25 seconds; penalize clips that are too short (< 10s) or too long (> 20s)
 
 ---
 

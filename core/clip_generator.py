@@ -9,22 +9,32 @@ import re
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
+from core.sentence_boundary_adjuster import SentenceBoundaryAdjuster
+
 logger = logging.getLogger(__name__)
 
 
 class ClipGenerator:
     """Generate video clips from engaging moments analysis"""
     
-    def __init__(self, output_dir: str = "engaging_clips"):
+    def __init__(self, output_dir: str = "engaging_clips", enable_sentence_adjustment: bool = True):
         """
         Initialize clip generator
         
         Args:
             output_dir: Directory to save generated clips
+            enable_sentence_adjustment: Enable automatic sentence boundary adjustment
         """
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
-        logger.info(f"📁 Clip output directory: {self.output_dir}")
+        self.enable_sentence_adjustment = enable_sentence_adjustment
+        
+        if self.enable_sentence_adjustment:
+            self.sentence_adjuster = SentenceBoundaryAdjuster()
+            logger.info(f"📁 Clip output directory: {self.output_dir} (sentence adjustment enabled)")
+        else:
+            self.sentence_adjuster = None
+            logger.info(f"📁 Clip output directory: {self.output_dir}")
     
     def generate_clips_from_analysis(self, 
                                     analysis_file: str,
@@ -72,6 +82,23 @@ class ClipGenerator:
                 if not input_video:
                     logger.warning(f"✗ Skipping rank {rank}: Video file not found")
                     continue
+                
+                # Adjust clip boundaries to sentence boundaries if enabled
+                if self.enable_sentence_adjustment and self.sentence_adjuster:
+                    srt_file = self._find_subtitle_file(video_part, subtitle_dir)
+                    if srt_file:
+                        logger.info(f"🔍 检查第 {rank} 个片段的句子边界...")
+                        original_start = start_time
+                        original_end = end_time
+                        adjusted_start, adjusted_end, was_adjusted = self.sentence_adjuster.adjust_clip_boundaries(
+                            srt_file, start_time, end_time, max_extension=5.0
+                        )
+                        if was_adjusted:
+                            start_time = adjusted_start
+                            end_time = adjusted_end
+                            logger.info(f"✂️  调整为完整句子: {original_start} → {adjusted_start} (开始), {original_end} → {adjusted_end} (结束)")
+                    else:
+                        logger.warning(f"⚠️  未找到字幕文件，无法进行句子边界调整")
                 
                 # Create output filename
                 safe_title = self._sanitize_filename(title)
@@ -299,8 +326,12 @@ class ClipGenerator:
         # Trim underscores
         return title.strip('_')
     
-    def _time_to_seconds(self, time_str: str) -> int:
-        """Convert MM:SS or HH:MM:SS to seconds"""
+    def _time_to_seconds(self, time_str: str) -> float:
+        """Convert MM:SS, HH:MM:SS, or HH:MM:SS,mmm (SRT format) to seconds"""
+        # Handle SRT format with milliseconds (HH:MM:SS,mmm)
+        if ',' in time_str:
+            return self._time_to_seconds_srt(time_str)
+        
         parts = time_str.split(':')
         if len(parts) == 2:  # MM:SS
             return int(parts[0]) * 60 + int(parts[1])
@@ -316,10 +347,13 @@ class ClipGenerator:
             end_seconds = self._time_to_seconds(end_time)
             duration = end_seconds - start_seconds
             
+            # Convert time format for FFmpeg (replace comma with dot if present)
+            ffmpeg_start_time = start_time.replace(',', '.')
+            
             # Use ffmpeg to extract clip
             cmd = [
                 'ffmpeg',
-                '-ss', start_time,
+                '-ss', ffmpeg_start_time,
                 '-i', input_video,
                 '-t', str(duration),
                 '-c:v', 'libx264',

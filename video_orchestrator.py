@@ -167,8 +167,12 @@ class VideoOrchestrator:
         self.title_style = title_style
 
         if self.generate_clips_enabled:
-            self.clip_generator = ClipGenerator(output_dir=str(self.output_dir))
-            logger.info(f"🎬 Clip generation: enabled")
+            from core.config import ENABLE_SENTENCE_ADJUSTMENT
+            self.clip_generator = ClipGenerator(
+                output_dir=str(self.output_dir),
+                enable_sentence_adjustment=ENABLE_SENTENCE_ADJUSTMENT
+            )
+            logger.info(f"🎬 Clip generation: enabled (sentence adjustment: {ENABLE_SENTENCE_ADJUSTMENT})")
         else:
             self.clip_generator = None
             logger.info("🎬 Clip generation: disabled")

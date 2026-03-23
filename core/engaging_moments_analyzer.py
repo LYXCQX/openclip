@@ -545,8 +545,8 @@ Please fix the JSON and return ONLY the valid JSON, no explanations:
             end_seconds = self.time_to_seconds(moment['end_time'])
             duration = end_seconds - start_seconds
             
-            # Check duration constraints (30 seconds to 4 minutes)
-            if duration < 30 or duration > 240:
+            # Check duration constraints (20 seconds to 2 minutes)
+            if duration < 10 or duration > 25:
                 logger.warning(f"Invalid duration: {duration} seconds")
                 # logger.warning(f"Invalid moment: {moment}")  # for debugging
                 return False

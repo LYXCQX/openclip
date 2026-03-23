@@ -50,7 +50,16 @@ MAX_DURATION_MINUTES: float = 20.0
 
 # Whisper model for transcript generation
 # Options: tiny, base, small, medium, large, turbo
-WHISPER_MODEL: str = "base"
+WHISPER_MODEL: str = "small"
+
+# Use WhisperX by default (better timestamp alignment and optional speaker diarization)
+# Set to False to use standard Whisper instead
+USE_WHISPERX_BY_DEFAULT: bool = True
+
+# Use character-level alignment in WhisperX for maximum precision
+# Character-level provides ~50-200ms precision vs word-level ~100-500ms
+# Recommended for better sentence boundary detection
+USE_CHAR_LEVEL_ALIGNMENT: bool = False
 
 # Title style for artistic text overlay
 # Options: gradient_3d, neon_glow, metallic_gold, rainbow_3d, crystal_ice,
@@ -65,3 +74,10 @@ SKIP_DOWNLOAD: bool = False
 
 # Skip transcript generation (use existing transcript files if available)
 SKIP_TRANSCRIPT: bool = False
+
+# Sentence boundary adjustment for clips
+# Automatically adjust clip start/end times to align with complete sentences
+ENABLE_SENTENCE_ADJUSTMENT: bool = True
+
+# Maximum seconds to extend clip boundaries to find sentence endings
+MAX_SENTENCE_EXTENSION: float = 5.0

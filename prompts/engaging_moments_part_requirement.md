@@ -91,11 +91,11 @@ In addition to the general criteria above, apply these type-specific nuances bas
 ## Requirements
 
 ### Duration Constraints (Must Follow)
-- Minimum duration: 30 seconds
-- Maximum duration: 4 minutes (240 seconds)
-- Optimal range: 45-180 seconds for best short-form engagement
-- If a moment is shorter than 30 seconds, extend it to include context
-- If a moment is longer than 4 minutes, split it into multiple moments or trim to the most engaging part
+- Minimum duration: 10 seconds
+- Maximum duration: 25 seconds
+- Optimal range: 10-25 seconds for best short-form engagement
+- If a moment is shorter than 10 seconds, extend it to include context
+- If a moment is longer than 25 seconds, split it into multiple moments or trim to the most engaging part
 
 ### Time Boundary Principles (Critical)
 
@@ -118,11 +118,46 @@ In addition to the general criteria above, apply these type-specific nuances bas
 - DO NOT include unrelated content after the moment ends
 - DO NOT blindly set end_time to the end of the transcript
 
-**Avoid Cutting At:**
-- Middle of sentences
-- During key point development
-- Critical logic reasoning steps
-- Continuous discussions without clear semantic boundaries
+**Sentence Completeness Rules (HIGHEST PRIORITY - MUST STRICTLY FOLLOW):**
+
+⚠️ **This is the MOST IMPORTANT rule - violating it will make clips unusable**
+
+- **NEVER cut in the middle of a sentence** - Always start and end at complete sentence boundaries
+- **Look for natural sentence endings** - periods, question marks, exclamation marks, or natural pauses
+- **Preserve complete thoughts** - Ensure the clip contains full, coherent statements
+- **Check sentence flow** - The first sentence should make sense as an opening, the last sentence should provide closure
+- **Extend if needed** - If a key moment ends mid-sentence, extend the end_time to include the complete sentence
+- **Adjust start if needed** - If a moment starts mid-sentence, move start_time back to the beginning of that sentence
+
+**Specific Steps to Follow:**
+1. Find the engaging core content
+2. Look backward: Find the nearest complete sentence beginning before this content (usually after the previous sentence's ending punctuation)
+3. Look forward: Find the nearest complete sentence ending after this content (period, question mark, exclamation mark)
+4. Set start_time to the beginning timestamp of the complete sentence
+5. Set end_time to the ending timestamp of the complete sentence
+6. Verify: Check that the selected text starts with the beginning of a sentence and ends with the end of a sentence
+
+**Examples:**
+❌ Wrong: `"...I think this approach is good because it can..."` (sentence cut off)
+✅ Correct: `"I think this approach is good because it can solve the core problem."` (complete sentence)
+
+❌ Wrong: `"...solve the problem. Now let's look at..."` (incomplete beginning)
+✅ Correct: `"Now let's look at another important aspect."` (complete sentence)
+
+**ABSOLUTELY FORBIDDEN to cut at (violations will make clips unusable):**
+- ❌ Middle of a sentence (most severe error)
+- ❌ After a comma but sentence not finished
+- ❌ After conjunctions like "because", "so", "but" when sentence incomplete
+- ❌ After a question is asked but answer not complete
+- ❌ In the middle of enumeration ("first...second...")
+- ❌ In the middle of quotes or dialogue
+
+**MUST end at:**
+- ✅ After a period (.)
+- ✅ After a question mark (?)
+- ✅ After an exclamation mark (!)
+- ✅ After complete dialogue ends
+- ✅ After complete paragraph or thought ends
 
 ### Handling Overlapping Moments
 - If two engaging moments overlap in time, choose the stronger one

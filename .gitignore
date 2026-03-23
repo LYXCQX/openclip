@@ -51,6 +51,7 @@ examples/
 tests/
 .claude/settings.json
 .claude/settings.local.json
+uploaded_videos/
 
 # Test results
 artistic_test_results/

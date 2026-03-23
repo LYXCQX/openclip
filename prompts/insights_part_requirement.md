@@ -39,9 +39,9 @@ Prioritize insights on these topics (but don't limit yourself to them):
 ## Requirements
 
 ### Clip Duration
-- Minimum: 30 seconds
-- Maximum: 3 minutes (180 seconds)
-- Optimal: 45-120 seconds — enough to capture context and the full argument
+- Minimum: 10 seconds
+- Maximum: 25 seconds
+- Optimal: 10-25 seconds — enough to capture context and the full argument
 
 ### Timestamp Rules (Critical)
 **MUST USE ACTUAL TIMESTAMPS FROM THE PROVIDED TRANSCRIPT**
@@ -49,12 +49,20 @@ Prioritize insights on these topics (but don't limit yourself to them):
 - `start_time`: See rules below depending on content format
 - `end_time`: End after the speaker fully completes the thought — never cut mid-sentence or mid-argument
 
+**Sentence Completeness Rules (CRITICAL):**
+- **NEVER cut in the middle of a sentence** - Always start and end at complete sentence boundaries
+- **Look for natural sentence endings** - periods, question marks, exclamation marks, or natural pauses
+- **Preserve complete thoughts** - Ensure the clip contains full, coherent statements about the insight
+- **Check sentence flow** - The first sentence should provide context, the last sentence should complete the thought
+- **Extend if needed** - If a key insight ends mid-sentence, extend the end_time to include the complete sentence
+- **Adjust start if needed** - If an insight starts mid-sentence, move start_time back to the beginning of that sentence
+
 ### How to Set start_time
 
 **Interview / conversation format** (there is a visible interviewer asking questions):
 - Set `start_time` to the beginning of the interviewer's question that prompted the insight
 - The question provides context that makes the clip self-contained — a viewer should not need to wonder why the speaker is saying what they're saying
-- If the question is very long (>30 seconds), start at the last question in the turn rather than the very beginning
+- If the question is very long (>25 seconds), start at the last question in the turn rather than the very beginning
 
 **Monologue / speech / solo format** (single speaker, no Q&A):
 - Begin 1-2 sentences before the core claim to include natural context

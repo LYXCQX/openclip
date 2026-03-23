@@ -16,7 +16,7 @@ These universal criteria apply to ALL content types:
 - **Memorability**: Unique or standout content that's likely to be shared
 
 ### Secondary Factors:
-- **Duration**: Optimal 45-180 seconds for short-form content
+- **Duration**: Optimal 10-25 seconds for short-form content
 - **Standalone Viability**: Can the clip be understood without context?
 - **Emotional Impact**: Does it evoke laughter, surprise, or inspiration?
 - **Information Density**: Does it contain valuable or surprising information?
@@ -73,6 +73,9 @@ In addition to the general criteria above, apply these type-specific nuances bas
 - Consider engagement scores and content quality
 - **Apply BOTH**: Always use the general ranking criteria, AND add type-specific nuances for your detected content type
 - Ensure selected moments are diverse and non-redundant
+- **Sentence Completeness Priority**: Prioritize moments that start and end at complete sentence boundaries
+- **Verify Speech Integrity**: Ensure selected clips contain complete thoughts and coherent statements
+- **Natural Flow**: Selected moments should have natural opening and closing sentences
 
 ### Content Guidelines
 - Maintain original titles and content from the source moments
@@ -180,13 +183,15 @@ Return your response as a JSON object following this exact structure:
 1. Review all provided engaging moments from different video parts
 2. Analyze the content type distribution across all moments
 3. **Apply ALL criteria**: Always use the general ranking criteria, AND add type-specific nuances for dominant content type
-4. Evaluate each moment based on these combined criteria
-5. Select and rank the top {max_clips} moments for maximum viewer appeal
-6. Ensure selected moments are diverse and non-redundant
-7. Preserve all original timing and content information
-8. Convert SRT timestamps (HH:MM:SS,mmm) to simple time format (HH:MM:SS or MM:SS)
-9. Create comprehensive analysis summary with themes and recommendations
-10. Include honorable mentions for additional content opportunities
+4. **Prioritize sentence completeness**: Give higher ranking to moments that start and end with complete sentences
+5. Evaluate each moment based on these combined criteria
+6. Select and rank the top {max_clips} moments for maximum viewer appeal
+7. Ensure selected moments are diverse and non-redundant
+8. Preserve all original timing and content information
+9. Convert SRT timestamps (HH:MM:SS,mmm) to simple time format (HH:MM:SS or MM:SS)
+10. Create comprehensive analysis summary with themes and recommendations
+11. Include honorable mentions for additional content opportunities
+12. **Final check**: Verify that selected moments contain complete, coherent speech segments
 
 ## IMPORTANT: JSON Response Format
 - Return ONLY valid JSON, no additional text or explanations

@@ -122,6 +122,10 @@ TRANSLATIONS = {
         'speaker_references_unavailable': 'Speaker Identification (Preview) — requires extra dependencies: `uv sync --extra speakers`',
         'speaker_references_dir_not_found': '⚠️ Directory not found. Please check the path.',
         'speaker_references_token_warning': '⚠️ HUGGINGFACE_TOKEN is not set. Speaker identification will fail at runtime.',
+        'upload_video_file': 'Upload Video File',
+        'upload_video_help': 'Upload a video file from your local machine',
+        'upload_srt_file': 'Upload Subtitle File (Optional)',
+        'upload_srt_help': 'Upload a .srt subtitle file with the same name as the video',
     },
     'zh': {
         'app_title': 'OpenClip',
@@ -208,6 +212,10 @@ TRANSLATIONS = {
         'speaker_references_unavailable': '说话人识别（预览版）— 需要额外依赖：`uv sync --extra speakers`',
         'speaker_references_dir_not_found': '⚠️ 目录不存在，请检查路径。',
         'speaker_references_token_warning': '⚠️ 未设置 HUGGINGFACE_TOKEN，运行时说话人识别将失败。',
+        'upload_video_file': '上传视频文件',
+        'upload_video_help': '从本地上传视频文件',
+        'upload_srt_file': '上传字幕文件（可选）',
+        'upload_srt_help': '上传与视频同名的 .srt 字幕文件',
     }
 }
 
@@ -531,12 +539,49 @@ with st.sidebar:
         )
         data['video_source'] = video_source
     else:
-        video_source = st.text_input(
-            t['local_file_path'],
-            value="" if data['input_type'] != "Local File" else data.get('video_source', ""),
-            help=t['local_file_help'],
-            key=f"local_file_path_{st.session_state.reset_counter}"
+        # File uploader for Colab/cloud environments
+        uploaded_file = st.file_uploader(
+            t.get('upload_video_file', 'Upload Video File'),
+            type=['mp4', 'avi', 'mov', 'mkv', 'flv', 'wmv', 'webm'],
+            help=t.get('upload_video_help', 'Upload a video file from your local machine'),
+            key=f"video_uploader_{st.session_state.reset_counter}"
         )
+        
+        if uploaded_file is not None:
+            # Create uploads directory if it doesn't exist
+            upload_dir = Path("uploaded_videos")
+            upload_dir.mkdir(exist_ok=True)
+            
+            # Save uploaded file
+            video_path = upload_dir / uploaded_file.name
+            with open(video_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            
+            video_source = str(video_path)
+            st.success(f"✅ File uploaded: {uploaded_file.name}")
+            
+            # Check for SRT file with same name
+            srt_uploader = st.file_uploader(
+                t.get('upload_srt_file', 'Upload Subtitle File (Optional)'),
+                type=['srt'],
+                help=t.get('upload_srt_help', 'Upload a .srt subtitle file with the same name as the video'),
+                key=f"srt_uploader_{st.session_state.reset_counter}"
+            )
+            
+            if srt_uploader is not None:
+                srt_path = video_path.with_suffix('.srt')
+                with open(srt_path, "wb") as f:
+                    f.write(srt_uploader.getbuffer())
+                st.success(f"✅ Subtitle uploaded: {srt_uploader.name}")
+        else:
+            # Fallback to text input for manual path entry
+            video_source = st.text_input(
+                t['local_file_path'],
+                value="" if data['input_type'] != "Local File" else data.get('video_source', ""),
+                help=t['local_file_help'],
+                key=f"local_file_path_{st.session_state.reset_counter}"
+            )
+        
         st.caption(t['local_file_srt_notice'])
         data['video_source'] = video_source
     
